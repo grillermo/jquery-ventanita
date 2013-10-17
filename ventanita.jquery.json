@@ -1,0 +1,28 @@
+{
+  "name": "ventanita",
+  "version": "1.4.0",
+  "title":  "jQuery Ventanita",
+  "description": "A simple, lightweight jQuery plugin for reading, writing and deleting ventanita.",
+  "author": {
+    "name": "Guillermo Siliceo",
+    "url": "https://github.com/grillermo"
+  },
+  "maintainers": [
+    {
+      "name": "Guillermo Siliceo",
+      "url": "https://github.com/grillermo"
+    },
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/grillermo/jquery-ventanita/master/MIT-LICENSE.txt"
+    }
+  ],
+  "dependencies": {
+    "jquery": ">=1.2"
+  },
+  "bugs": "https://github.com/grillermo/jquery-ventanita/issues",
+  "homepage": "https://github.com/grillermo/jquery-ventanita",
+  "docs": "https://github.com/grillermo/jquery-ventanita"
+}

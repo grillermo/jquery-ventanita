@@ -1,0 +1,17 @@
+{
+  "name": "jquery.ventanita",
+  "version": "1.0",
+  "main": [
+    "./jquery.ventanita.js"
+  ],
+  "dependencies": {
+    "jquery": ">=1.2"
+  },
+  "ignore": [
+    ".*",
+    "*.json",
+    "*.md",
+    "*.txt",
+    "Gruntfile.js"
+  ]
+}
