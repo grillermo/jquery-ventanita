@@ -1,0 +1,35 @@
+#overlay{
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 0;
+    z-index: 15;
+    background-color: white;
+    opacity: 0.8;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity='80')";
+    filter: alpha(opacity=80);
+    zoom: 1
+}
+  
+.dialog_box{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 16;
+    background-color: white;
+    border: solid 1px #D1D1D1;
+    text-align: center
+}
+
+.dialog_box .close{ 
+    position: absolute;
+    top: -15px;
+    right: -25px;
+    z-index: 99;
+    background-image: url(/img/close.png);
+    background-repeat: no-repeat;
+    background-size: 30px;
+    display: block;
+    padding: 20px;
+ }    
