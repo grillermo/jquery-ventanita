@@ -78,8 +78,8 @@
                     // Center the dialog in the viewport
                     $dialog_box.css({
                         'position': 'fixed',
-                        'top': ( $(window).height() - $dialog_box.height() ) / 2+$(window).scrollTop() + 'px',
-                        'left': ( $(window).width() - $dialog_box.width() ) / 2+$(window).scrollLeft() + 'px'
+                        'top': ( $(window).height() - $dialog_box.height() ) / 2+'px',
+                        'left': ( $(window).width() - $dialog_box.width() ) / 2+'px'
                     });
                 });
             });
