@@ -5,9 +5,9 @@
  * Copyright 2013 Guillermo Siliceo
  * Released under the MIT license
  */
-;(function($, window, document, undefined){
+;(function($, window, document){
     $.extend($.fn,{
-        dialog: function(opts,e){
+        dialog: function(opts){
             var settings = $.extend({
                 // Dialogs can be non closable
                 closable: true,
@@ -30,10 +30,10 @@
             $(settings.contents).detach();
             
             // The dialog can be attached to multiple objects, we return it to make it chainable
-            return $(this).each(function(i, element){
+            return $(this).each(function(){
 
                 $(this).on('click',function(e){
-
+                    e.preventDefault();
                     var $overlay = $('#overlay');
                     // If a dialog already exists, close it
                     if($overlay.length !== 0){
