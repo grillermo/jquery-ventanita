@@ -6,8 +6,9 @@
  * Released under the MIT license
  */
 ;(function($, window, document){
-    $.extend($.fn,{
-        dialog: function(opts){
+    var methods = {
+        init: function(opts){
+            // The actual plugin
             var settings = $.extend({
                 // Dialogs can be non closable
                 closable: true,
@@ -22,13 +23,9 @@
 
             }, opts);
 
-            // Make a copy to leave the original content free for further manipulation
-            var content = $(settings.contents).clone();
+            // Lets get the content
+            var $content = $(settings.contents);
 
-            // We remove the original content to prevent having more than one element with the same id 
-            $(settings.contents).remove();
-            $(settings.contents).detach();
-            
             // The dialog can be attached to multiple objects, we return it to make it chainable
             return $(this).each(function(){
 
@@ -53,8 +50,8 @@
                         height: $(document).height()
                     });
 
-                    // Set provided content
-                    $dialog_box.append(content);
+                    // Set provided $content
+                    $dialog_box.append($content);
 
                     // Handling closing
                     if (settings.closable){
@@ -65,25 +62,43 @@
                             $('.dialog_box').fadeOut(function(){
                                 $('.dialog_box').detach();
                             });
-                            settings.onClose(content);
+                            settings.onClose($content);
                             return false;
                         });
                     }
 
-                    settings.beforeOpen(content);
-                    $(content).fadeIn(function(){
-                        settings.onOpen(content);
+                    settings.beforeOpen($content);
+                    $content.fadeIn(function(){
+                        settings.onOpen($content);
                     });
 
                     // Center the dialog in the viewport
-                    $dialog_box.css({
-                        'position': 'fixed',
-                        'top': ( $(window).height() - $dialog_box.height() ) / 2+'px',
-                        'left': ( $(window).width() - $dialog_box.width() ) / 2+'px'
-                    });
+                    $(document).scroll(function(){
+                        $dialog_box.css({
+                            'position': 'fixed',
+                            'top': ( $(window).height() - $dialog_box.height() ) / 2+'px',
+                            'left': ( $(window).width() - $dialog_box.width() ) / 2+'px'
+                        });
+                    }).trigger('scroll');
                 });
             });
+        },
+        close: function( ){  
+            // Little helper method to close ventanita once it has been instantiated
+            $('#overlay').trigger('click');
         }
-    });
+    };
+    // Wrapper to detect if plugin was initialized or it was passed a method to execute
+    $.fn.ventanita = function(methodOrOptions) {
+        if ( methods[methodOrOptions] ) {
+            return methods[ methodOrOptions ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
+            // Default to "init"
+            return methods.init.apply( this, arguments );
+        } else {
+            $.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.tooltip' );
+        }    
+        return false;
+    };
     // This plugin shows a dialog with the provided content on click on the target
 })(jQuery, window, document);

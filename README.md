@@ -30,7 +30,7 @@ And copy the optional /img/close.img and/or adjust the path in the css
 ## Usage a full example
 
 ```javascript
-$('.open_ventanita_button').ventanita({
+var dialog = $('.open_ventanita_button').ventanita({
     contents: '#ventanita_content_div',
     beforeOpen: function($dialog_content){
         console.log('i can modify the content before displaying it')
@@ -42,6 +42,9 @@ $('.open_ventanita_button').ventanita({
         console.log('finished closing')
     }
 });
+
+// You can control it like this
+dialog.ventanita('close');
 ```
 
 ## Contributing
