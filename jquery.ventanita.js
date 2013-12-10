@@ -55,7 +55,7 @@
 
                     // Handling closing
                     if (settings.closable){
-                        $ui.on('click',function(){
+                        $('.dialog_box .ventanita_close, #overlay').on('click',function(){
                             $ui.fadeOut(function(){
                                 $ui.detach();
                                 $(document).unbind('scroll');
