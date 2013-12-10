@@ -28,12 +28,12 @@
 
             // The dialog can be attached to multiple objects, we return it to make it chainable
             return $(this).each(function(){
-
                 $(this).on('click',function(e){
+                    self = this;
                     e.preventDefault();
-                    var $overlay = $('#overlay');
+                    
                     // If a dialog already exists, close it
-                    if($overlay.length !== 0){
+                    if($('#overlay').length !== 0){
                         $overlay.trigger('click');
                     }
 
@@ -42,10 +42,10 @@
                     $ui.hide().appendTo('body').fadeIn();
                     var $dialog_box = $('.dialog_box');
                     if (settings.closable && settings.showClose){
-                        $dialog_box.append('<a class="close" href="#"></a>');
+                        $dialog_box.append('<a class="ventanita_close" href="#"></a>');
                     }
 
-                    // Customize the background
+                    // Customize the background to fill all the page
                     $('#overlay').css({
                         height: $(document).height()
                     });
@@ -55,12 +55,10 @@
 
                     // Handling closing
                     if (settings.closable){
-                        $('.dialog_box .close, #overlay').on('click',function(){
-                            $('#overlay').fadeOut(function(){
-                                $('#overlay').detach();
-                            });
-                            $('.dialog_box').fadeOut(function(){
-                                $('.dialog_box').detach();
+                        $ui.on('click',function(){
+                            $ui.fadeOut(function(){
+                                $ui.detach();
+                                $(document).unbind('scroll');
                             });
                             settings.onClose($content);
                             return false;
@@ -73,7 +71,7 @@
                     });
 
                     // Center the dialog in the viewport
-                    $(document).scroll(function(){
+                    $(document).bind('scroll',function(){
                         $dialog_box.css({
                             'position': 'fixed',
                             'top': ( $(window).height() - $dialog_box.height() ) / 2+'px',
