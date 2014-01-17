@@ -1,89 +1,91 @@
 /*!
- * jQuery Ventanita Plugin v1.0
+ * jQuery Ventanita Plugin v1.1
  * https://github.com/grillermo/jquery-ventanita
  *
  * Copyright 2013 Guillermo Siliceo
  * Released under the MIT license
  */
+
 ;(function($, window, document){
+
     var methods = {
         init: function(opts){
             // The actual plugin
             var settings = $.extend({
-                // Dialogs can be non closable
-                closable: true,
-                // or have the close button hidden
-                showClose: true,
-
                 // Callbacks
+                beforeSetup: function(){return true;},
                 beforeOpen: function(){},
                 onClose: function(){},
                 onOpen: function(){},
-                onScroll: function(){}
+                preventDefault: function(){return true;},
+                contents: opts.contents
 
             }, opts);
 
-            // Lets get the content
-            var $content = $(settings.contents);
+            // In case we get rebinded
+            if($('#overlay').length === 0){
+                $ui = $('<div id="overlay"></div><div class="dialog_box"><a class="ventanita_close" href="#"></a></div>');
+                $ui.hide().appendTo('body');
+            }
 
             // The dialog can be attached to multiple objects, we return it to make it chainable
-            return $(this).each(function(){
-                $(this).on('click',function(e){
-                    self = this;
+            return $('body').on('click',this.selector,function(e){
+                var $button = $(this);
+                // Shorcircuit if the beforesetup returns falsy
+                if (!settings.beforeSetup($button,$(settings.contents))){
+                    return false;
+                }
+                if (settings.preventDefault($button,$(settings.contents))){
                     e.preventDefault();
-                    
-                    // If a dialog already exists, close it
-                    if($('#overlay').length !== 0){
-                        $overlay.trigger('click');
-                    }
+                }
 
-                    // Create html tags
-                    var $ui = $('<div id="overlay"></div><div class="dialog_box"></div>');
-                    $ui.hide().appendTo('body').fadeIn();
-                    var $dialog_box = $('.dialog_box');
-                    if (settings.closable && settings.showClose){
-                        $dialog_box.append('<a class="ventanita_close" href="#"></a>');
-                    }
+                // Customize the background to fill all the page
+                $('#overlay').css({
+                    height: $(document).height()
+                });
 
-                    // Customize the background to fill all the page
-                    $('#overlay').css({
-                        height: $(document).height()
+                // Set provided contents
+                settings.beforeOpen($button,$(settings.contents));
+                $('.dialog_box').append($(settings.contents));
+                $ui.fadeIn();
+
+                // Handling closing
+                $('.dialog_box .ventanita_close, #overlay').on('click',function(){
+                    $ui.fadeOut(function(){
+                        $(document).unbind('scroll');
+                        settings.onClose($button,$(settings.contents));
                     });
+                    return false;
+                });
 
-                    // Set provided $content
-                    $dialog_box.append($content);
+                $(settings.contents).fadeIn(function(){
+                    settings.onOpen($button,$(settings.contents));
+                });
 
-                    // Handling closing
-                    if (settings.closable){
-                        $('.dialog_box .ventanita_close, #overlay').on('click',function(){
-                            $ui.fadeOut(function(){
-                                $ui.detach();
-                                $(document).unbind('scroll');
-                            });
-                            settings.onClose($content);
-                            return false;
-                        });
-                    }
-
-                    settings.beforeOpen($content);
-                    $content.fadeIn(function(){
-                        settings.onOpen($content);
+                // Center the dialog in the viewport
+                $(document).bind('scroll',function(){
+                    $('.dialog_box').css({
+                        'position': 'fixed',
+                        'top': ( $(window).height() - $('.dialog_box').height() ) / 2+'px',
+                        'left': ( $(window).width() - $('.dialog_box').width() ) / 2+'px'
                     });
-
-                    // Center the dialog in the viewport
-                    $(document).bind('scroll',function(){
-                        $dialog_box.css({
+                }).trigger('scroll');
+                $(window).bind('resize',function(){
+                        $('.dialog_box').css({
                             'position': 'fixed',
-                            'top': ( $(window).height() - $dialog_box.height() ) / 2+'px',
-                            'left': ( $(window).width() - $dialog_box.width() ) / 2+'px'
+                            'top': ( $(window).height() - $('.dialog_box').height() ) / 2+'px',
+                            'left': ( $(window).width() - $('.dialog_box').width() ) / 2+'px'
                         });
-                    }).trigger('scroll');
                 });
             });
         },
         close: function( ){  
             // Little helper method to close ventanita once it has been instantiated
             $('#overlay').trigger('click');
+        },
+        open: function(){  
+            // Little helper method to close ventanita once it has been instantiated
+            $(this).trigger('click');
         }
     };
     // Wrapper to detect if plugin was initialized or it was passed a method to execute
