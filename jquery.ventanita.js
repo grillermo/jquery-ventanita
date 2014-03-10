@@ -17,6 +17,7 @@
                 beforeOpen: function(){},
                 onClose: function(){},
                 onOpen: function(){},
+                preventClosing: false,
                 preventDefault: function(){return true;},
                 contents: opts.contents
 
@@ -29,7 +30,7 @@
             }
 
             // The dialog can be attached to multiple objects, we return it to make it chainable
-            return $('body').on('click',this.selector,function(e){
+            return $(this).on('click',function(e){
                 var $button = $(this);
                 // Shorcircuit if the beforesetup returns falsy
                 if (!settings.beforeSetup($button,$(settings.contents))){
@@ -50,13 +51,19 @@
                 $ui.fadeIn();
 
                 // Handling closing
-                $('.dialog_box .ventanita_close, #overlay').on('click',function(){
-                    $ui.fadeOut(function(){
-                        $(document).unbind('scroll');
-                        settings.onClose($button,$(settings.contents));
+                if(!settings.preventClosing){
+                    $('.dialog_box .ventanita_close, #overlay').on('click',function(){
+                        $ui.fadeOut(function(){
+                            $(document).unbind('scroll');
+                            settings.onClose($button,$(settings.contents));
+                        });
+                        return false;
                     });
-                    return false;
-                });
+                    $('#overlay').addClass('closable');
+                }else{
+                    $('#overlay').removeClass('closable');
+                }
+
 
                 $(settings.contents).fadeIn(function(){
                     settings.onOpen($button,$(settings.contents));
@@ -82,10 +89,6 @@
         close: function( ){  
             // Little helper method to close ventanita once it has been instantiated
             $('#overlay').trigger('click');
-        },
-        open: function(){  
-            // Little helper method to close ventanita once it has been instantiated
-            $(this).trigger('click');
         }
     };
     // Wrapper to detect if plugin was initialized or it was passed a method to execute
@@ -98,7 +101,8 @@
         } else {
             $.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.tooltip' );
         }    
-        return false;
+        return this;
     };
     // This plugin shows a dialog with the provided content on click on the target
 })(jQuery, window, document);
+
