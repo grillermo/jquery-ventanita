@@ -1,6 +1,5 @@
+You need to open a modal window when something is clicked (or not)
 A simple, lightweight jQuery plugin for creating modal popups, with a decent css default.
-
-A simple proyect to learn proper jquery plugin building, my first attemp :)
 
 ## Features
 
@@ -45,6 +44,13 @@ var dialog = $('.open_ventanita_button').ventanita({
 
 // You can control it like this
 dialog.ventanita('close');
+```
+
+You can also open a modal without a click handler like this
+```javascript
+var dialog = $.fn.ventanita({
+    // Same options
+});
 ```
 
 ## Contributing

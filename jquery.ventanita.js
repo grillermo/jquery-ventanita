@@ -7,6 +7,53 @@
  */
 
 ;(function($, window, document){
+    var ventanita_bind = function($button,settings){
+        // Customize the background to fill all the page
+        $('#overlay').css({
+            height: $(document).height()
+        });
+
+        // Set provided contents
+        settings.beforeOpen($button,$(settings.contents));
+        $('.dialog_box').append($(settings.contents));
+        $ui.fadeIn();
+
+        // Handling closing
+        if(!settings.preventClosing){
+            $('.dialog_box .ventanita_close, #overlay').on('click',function(){
+                $ui.fadeOut(function(){
+                    $(document).unbind('scroll');
+                    settings.onClose($button,$(settings.contents));
+                });
+                return false;
+            });
+            $('#overlay').addClass('closable');
+        }else{
+            $('#overlay').removeClass('closable');
+        }
+
+
+        $(settings.contents).fadeIn(function(){
+            settings.onOpen($button,$(settings.contents));
+        });
+
+        // Center the dialog in the viewport
+        $(document).bind('scroll',function(){
+            $('.dialog_box').css({
+                'position': 'fixed',
+                'top': ( $(window).height() - $('.dialog_box').height() ) / 2+'px',
+                'left': ( $(window).width() - $('.dialog_box').width() ) / 2+'px'
+            });
+        }).trigger('scroll');
+        $(window).bind('resize',function(){
+                $('.dialog_box').css({
+                    'position': 'fixed',
+                    'top': ( $(window).height() - $('.dialog_box').height() ) / 2+'px',
+                    'left': ( $(window).width() - $('.dialog_box').width() ) / 2+'px'
+                });
+        });
+        return $button
+    }
 
     var methods = {
         init: function(opts){
@@ -29,6 +76,13 @@
                 $ui.hide().appendTo('body');
             }
 
+            // If we are being called without a selector $.fn.ventanita
+            if(this.selector === ''){
+                // We pass the empty jquery object because a jquery objects is expected
+                // and we don't have one
+                return ventanita_bind($([]),settings);
+            }
+
             // The dialog can be attached to multiple objects, we return it to make it chainable
             return $(this).on('click',function(e){
                 var $button = $(this);
@@ -39,51 +93,9 @@
                 if (settings.preventDefault($button,$(settings.contents))){
                     e.preventDefault();
                 }
+                // Actual plugin
+                ventanita_bind($button,settings);
 
-                // Customize the background to fill all the page
-                $('#overlay').css({
-                    height: $(document).height()
-                });
-
-                // Set provided contents
-                settings.beforeOpen($button,$(settings.contents));
-                $('.dialog_box').append($(settings.contents));
-                $ui.fadeIn();
-
-                // Handling closing
-                if(!settings.preventClosing){
-                    $('.dialog_box .ventanita_close, #overlay').on('click',function(){
-                        $ui.fadeOut(function(){
-                            $(document).unbind('scroll');
-                            settings.onClose($button,$(settings.contents));
-                        });
-                        return false;
-                    });
-                    $('#overlay').addClass('closable');
-                }else{
-                    $('#overlay').removeClass('closable');
-                }
-
-
-                $(settings.contents).fadeIn(function(){
-                    settings.onOpen($button,$(settings.contents));
-                });
-
-                // Center the dialog in the viewport
-                $(document).bind('scroll',function(){
-                    $('.dialog_box').css({
-                        'position': 'fixed',
-                        'top': ( $(window).height() - $('.dialog_box').height() ) / 2+'px',
-                        'left': ( $(window).width() - $('.dialog_box').width() ) / 2+'px'
-                    });
-                }).trigger('scroll');
-                $(window).bind('resize',function(){
-                        $('.dialog_box').css({
-                            'position': 'fixed',
-                            'top': ( $(window).height() - $('.dialog_box').height() ) / 2+'px',
-                            'left': ( $(window).width() - $('.dialog_box').width() ) / 2+'px'
-                        });
-                });
             });
         },
         close: function( ){  
@@ -105,4 +117,3 @@
     };
     // This plugin shows a dialog with the provided content on click on the target
 })(jQuery, window, document);
-
