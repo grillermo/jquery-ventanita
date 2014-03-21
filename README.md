@@ -8,6 +8,8 @@ A simple, lightweight jQuery plugin for creating modal popups, with a decent css
 * Adapts to any content size
 * Simple usage
 * Totally reusable
+* Supports multiple dialogs
+* Keeps your bindings to the content (knockout.js and the like supported)
 
 ## Installation
 
@@ -39,6 +41,9 @@ var dialog = $('.open_ventanita_button').ventanita({
     },
     onClose: function(){
         console.log('finished closing')
+    },
+    preventClosing: function(){
+        return something_processing() ? true : false;
     }
 });
 

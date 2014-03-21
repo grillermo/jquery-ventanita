@@ -8,29 +8,36 @@
 
 ;(function($, window, document){
     var ventanita_bind = function($button,settings){
-        // Customize the background to fill all the page
-        $('#overlay').css({
-            height: $(document).height()
-        });
+        var $overlay = $('#overlay');
+        var $ui = $('.dialog_box');
+
+        if ($overlay.length === 0){
+            // We asume if the overlay doesnt exists neither the rest of the ui
+            var $ui = $('<div class="dialog_box"><a class="ventanita_close" href="#"></a></div>');
+            var $overlay = $('<div id="overlay"></div>');
+            $overlay.hide().appendTo('body');
+            $ui.hide().appendTo('body');
+        }
 
         // Set provided contents
         settings.beforeOpen($button,$(settings.contents));
-        $('.dialog_box').append($(settings.contents));
-        $ui.fadeIn();
+        $ui.append($(settings.contents)).fadeIn();
+        
+        // Customize the background to fill all the page
+        $overlay.css({ height: $(document).height() }).fadeIn();
 
         // Handling closing
-        if(!settings.preventClosing){
-            $('.dialog_box .ventanita_close, #overlay').on('click',function(){
-                $ui.fadeOut(function(){
-                    $(document).unbind('scroll');
-                    settings.onClose($button,$(settings.contents));
-                });
+        $('.dialog_box .ventanita_close, #overlay').on('click',function(){
+            if(!settings.preventClosing()){
+                $(document).unbind('scroll');
+                $overlay.fadeOut();
+                $ui.fadeOut();
+                // Since append moved the element to ventanita lets return it to the body
+                $('body').append($(settings.contents).hide());
+                settings.onClose($button,$(settings.contents));
                 return false;
-            });
-            $('#overlay').addClass('closable');
-        }else{
-            $('#overlay').removeClass('closable');
-        }
+            }
+        });
 
 
         $(settings.contents).fadeIn(function(){
@@ -64,19 +71,13 @@
                 beforeOpen: function(){},
                 onClose: function(){},
                 onOpen: function(){},
-                preventClosing: false,
+                preventClosing: function(){ return false;},
                 preventDefault: function(){return true;},
                 contents: opts.contents
-
             }, opts);
 
-            // In case we get rebinded
-            if($('#overlay').length === 0){
-                $ui = $('<div id="overlay"></div><div class="dialog_box"><a class="ventanita_close" href="#"></a></div>');
-                $ui.hide().appendTo('body');
-            }
 
-            // If we are being called without a selector $.fn.ventanita
+            // If we are being called without a selector ie $.fn.ventanita
             if(this.selector === ''){
                 // We pass the empty jquery object because a jquery objects is expected
                 // and we don't have one
@@ -117,3 +118,4 @@
     };
     // This plugin shows a dialog with the provided content on click on the target
 })(jQuery, window, document);
+
